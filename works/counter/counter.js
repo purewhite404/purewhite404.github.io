@@ -1,11 +1,19 @@
-let count = 1
+let count = 0
 
 const countUp = () => {
-        count *= 2
+        count++
         const countElement = document.querySelector('#count')
         countElement.innerText = '回数: ' + count
+}
 
-        title =''
-        const initialMoveTitle = document.querySelector('#title')
-        initialMoveTitle.innerText = 'カウンターです（2倍）'
+const countDown = () => {
+        count--
+        const countElement = document.querySelector('#count')
+        countElement.innerText = '回数: ' + count
+}
+
+const reset = () => {
+        count = 0
+        const countElement = document.querySelector('#count')
+        countElement.innerText = '回数: ' + count
 }
