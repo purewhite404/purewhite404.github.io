@@ -28,6 +28,14 @@ p, div {
         padding: 0 0 0 20px;
 }
 
+a {
+        text-decoration: none;
+}
+
+a:hover {
+        text-decoration: underline;
+}
+
 footer {
     display: flex;
     justify-content: center;
