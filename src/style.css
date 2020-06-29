@@ -1,5 +1,22 @@
 body {
+        width: 1000px;
+        margin: auto;
         color: #394044;
+        font-family: 'Noto Sans JP', sans-serif;
+}
+
+h1 {
+        padding: 0.5em 0 0.5em 10px;
+        border-bottom: solid 2px #E5E5E5;
+}
+
+h2 {
+        padding: 0.3em 0 0.3em 10px;
+        border-bottom: solid 2px #E5E5E5;
+}
+
+p, div {
+        padding: 0 0 0 20px;
 }
 
 .image {
