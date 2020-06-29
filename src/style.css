@@ -5,6 +5,15 @@ body {
         font-family: 'Noto Sans JP', sans-serif;
 }
 
+nav ul {
+        text-align: right;
+        list-style: none;
+}
+
+nav ul li {
+        display: inline-block;
+}
+
 h1 {
         padding: 0.5em 0 0.5em 10px;
         border-bottom: solid 2px #E5E5E5;
@@ -19,6 +28,9 @@ p, div {
         padding: 0 0 0 20px;
 }
 
-.image {
-        width: 200px;
+footer {
+    display: flex;
+    justify-content: center;
+    font-size: x-small;
+    padding: 5px;
 }
