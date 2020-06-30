@@ -1,6 +1,4 @@
 body {
-        width: 1000px;
-        margin: auto;
         color: #394044;
         font-family: 'Noto Sans JP', sans-serif;
 }
@@ -25,7 +23,7 @@ h2 {
 }
 
 p, div {
-        padding: 0 0 0 20px;
+        padding: 0 20px 0 20px;
 }
 
 a {
