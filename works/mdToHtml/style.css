@@ -1,0 +1,16 @@
+textarea {
+        resize: none;
+        width: 100%;
+}
+
+form {
+        width: 50%;
+}
+
+#md {
+        float: left;
+}
+
+#html {
+        float: right;
+}
