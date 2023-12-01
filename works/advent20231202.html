@@ -114,7 +114,7 @@ FTR102についてはR16lab氏の記事<br>
 またデジタル通信プログラムについては<br>
 <a href="https://projecthub.arduino.cc/saadsaif0333/data-transfer-using-led-light-li-fi-ee33a3">Data Transfer Using LED Light (Li-Fi) - Arduino Project HUB</a>を参考にしました。</p>
 <div align="center">
-<p><img src="lighttransiver.jpg?0.13701896702104022" alt="" width="300px"><br>
+<p><img src="src\lighttransiver.jpg?0.3635539128282912" alt="" width="300px"><br>
 Fig.2 作ったもの。Arduinoに簡単に取り付けられるようにカスタムシールド上に製作。</p>
 </div>
 <h2 id="プロトコル">プロトコル </h2>
@@ -122,7 +122,7 @@ Fig.2 作ったもの。Arduinoに簡単に取り付けられるようにカス�
 プロトコルと言っても大したものではないんですが、そのまま文字コードを送っても受信側はびっくりしてしまうのでまずは最初にStart bitを送ることにします。<br>
 それから1byteを送ったあとデータが正しく受け取れているかどうかの偶数パリティCheck sum bitを送ります（あってるかどうかを1/2の確率でしか判定できないのは果たして意味があるのか、というツッコミはなしで）。</p>
 <div align="center">
-<p><img src="protocol.png?0.9450165148199694" alt="" width="300px"><br>
+<p><img src="src\protocol.png?0.4991811431591133" alt="" width="300px"><br>
 Fig.3 プロトコル概要。0x4A=Jのタイムチャート。</p>
 </div>
 <p>そんなわけでStart bitが1bit, データ部が8bit, Check sumが1bit<br>
@@ -142,7 +142,7 @@ Arduinoの信号で直接LEDを駆動させることもできますが、高輝�
 データシート上ではこの回路構成で、最大約65mAの電流が流れ、これはLEDの定格70mAぎりぎりとなっています。<br>
 結構まぶしいです。</p>
 <div align="center">
-<p><img src="schematic.png?0.39067324576256235" alt="" width="300px"><br>
+<p><img src="src\schematic.png?0.43050263244670695" alt="" width="300px"><br>
 Fig.4 送信部回路図</p>
 </div>
 <h3 id="受信部">受信部 </h3>
@@ -152,7 +152,7 @@ Fig.4 送信部回路図</p>
 <h2 id="実験結果">実験結果 </h2>
 <p>5m離れたところからの送受信をしました。</p>
 <div align="center">
-<p><img src="result1.jpg" alt="" width="300px"> <img src="result2.jpg" alt="" width="300px"><br>
+<p><img src="src/result1.jpg" alt="" width="300px"> <img src="src/result2.jpg" alt="" width="300px"><br>
 Fig.5 送信機側（左）と受信機側（右）シリアルコンソール画面</p>
 </div>
 写真撮影時はいい感じでは！？と思っていたのですが、
