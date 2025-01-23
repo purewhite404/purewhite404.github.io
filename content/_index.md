@@ -1,4 +1,4 @@
 +++
 +++
 
-Hi! Welcome to Hook! Hook is a Zola theme.
+電子工作やアマチュア無線についての記録
