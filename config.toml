@@ -21,4 +21,5 @@ highlight_code = true
 links = [
     { title = "Bluesky", href = "https://purewhite404.bsky.social" },
     { title = "GitHub", href = "https://github.com/purewhite404" },
+    { title = "About me", href = "./about" },
 ]
