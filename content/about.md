@@ -1,7 +1,7 @@
 +++
+title = "Curriculum Vitae"
 +++
 
-## Curriculum Vitae
 - JR2HAO
 - 第1級アマチュア無線技士
 - 基本情報技術者試験合格
