@@ -33,13 +33,15 @@
     {% endblock header %}
     {% block content %}
     {% set blog = get_section(path="blog/_index.md") %}
-    {% if section.content or blog.pages %}
+    {% set memo = get_section(path="memo/_index.md") %}
+    {% if section.content or blog.pages or memo.pages %}
     <main>
         {% if section.content %}
         <div {% if blog.pages %}class="space"{% endif %}>
             {{ section.content | safe }}
         </div>
         {% endif %}
+
         {% if blog.pages %}
         <h2>Recent posts</h2>
         <ul>
@@ -47,7 +49,17 @@
             <li><a href="{{ post.permalink }}">{{ post.title }}</a></li>
             {% endfor %}
         </ul>
-        <p><a href="{{ blog.permalink }}">Archive</a></p>
+        <p><a href="{{ blog.permalink }}">View all</a></p>
+        {% endif %}
+
+        {% if memo.pages %}
+        <h2>Technical notes</h2>
+        <ul>
+            {% for post in memo.pages | slice(end=20) %}
+            <li><a href="{{ post.permalink }}">{{ post.title }}</a></li>
+            {% endfor %}
+        </ul>
+        <p><a href="{{ memo.permalink }}">View all</a></p>
         {% endif %}
     </main>
     {% endif %}
