@@ -22,7 +22,7 @@
         {% if config.extra.links or linked_pages %}
         <nav class="header-links">
             {% for link in config.extra.links %}
-            <a href="{{ link.href }}">{{ link.title }}</a>
+            <a href="{{ link.href }}">{{ link.title }}<img class="icons" src="/img/{{ link.icon }}"></a>
             {% endfor %}
             {% for page in linked_pages %}
             <a href="{{ page.permalink }}">{{ page.title }}</a>
