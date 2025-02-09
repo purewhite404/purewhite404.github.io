@@ -15,14 +15,22 @@ body {
 }
 
 .header-links {
-    align-content: center;
+    display: flex;
+    align-items: center;
     margin: 0 0 0 auto;
     a {
         margin-right: 0.5em;
+        display: flex;
+        color: var(--secondary);
     }
 
     a:last-of-type {
         margin-right: 0;
+    }
+
+    .icons {
+        width: 1.6em;
+        height: 1.6em;
     }
 }
 
@@ -41,6 +49,10 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
     line-height: 1.25;
+}
+
+a{
+    text-decoration: none;
 }
 
 img {
@@ -113,4 +125,8 @@ table {
     body {
         padding: 1em 1em;
     }
+}
+
+footer {
+    margin-top: 3em;
 }

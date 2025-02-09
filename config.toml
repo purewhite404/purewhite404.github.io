@@ -19,7 +19,7 @@ highlight_code = true
 [extra]
 # Put all your custom variables here
 links = [
-    { title = "About me", href = "./about" },
-    { title = "GitHub", href = "https://github.com/purewhite404" },
-    { title = "Bluesky", href = "https://purewhite404.bsky.social" },
+    { title = "Bluesky", href = "https://bsky.app/profile/jr2hao.dev", icon = "bluesky.svg"},
+    { title = "GitHub", href = "https://github.com/purewhite404", icon = "github.svg"},
+    { title = "About me", href = "./about", icon = "aboutme.svg"},
 ]
