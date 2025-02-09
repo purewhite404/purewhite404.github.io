@@ -15,12 +15,21 @@ body {
 }
 
 .header-links {
+    display: flex;
+
     a {
         margin-right: 0.5em;
+        display: flex;
+        color: var(--secondary);
     }
 
     a:last-of-type {
         margin-right: 0;
+    }
+
+    .icons {
+        width: 1.6em;
+        height: 1.6em;
     }
 }
 
@@ -38,6 +47,10 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
     line-height: 1.25;
+}
+
+a{
+    text-decoration: none;
 }
 
 img {
