@@ -1,7 +1,7 @@
 +++
+title = "Curriculum Vitae"
 +++
 
-## Curriculum Vitae
 - JR2HAO
 - 第1級アマチュア無線技士
 - 東京工業大学 工学院機械系 卒業

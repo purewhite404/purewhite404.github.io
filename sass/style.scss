@@ -16,7 +16,8 @@ body {
 
 .header-links {
     display: flex;
-
+    align-items: center;
+    margin: 0 0 0 auto;
     a {
         margin-right: 0.5em;
         display: flex;
@@ -35,6 +36,7 @@ body {
 
 .space {
     margin-bottom: 2em;
+    display: flex;
 }
 
 .doublespace {
