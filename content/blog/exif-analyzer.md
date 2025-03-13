@@ -3,7 +3,7 @@ title = "EXIFから露光を表示するアプリケーションを作った"
 date = 2025-03-13
 +++
 
-完成したものは[こちら](../exif-analyzer)
+完成したものは[こちら](../../exif-analyzer)
 
 elm でできている。
 exif を解析する部分は exif-js を使っているので、elm と JS を port で繋いでいる。
