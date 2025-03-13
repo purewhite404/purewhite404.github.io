@@ -37,9 +37,7 @@
     {% if section.content or blog.pages or memo.pages %}
     <main>
         {% if section.content %}
-        <div {% if blog.pages %}class="space"{% endif %}>
             {{ section.content | safe }}
-        </div>
         {% endif %}
 
         {% if blog.pages %}
