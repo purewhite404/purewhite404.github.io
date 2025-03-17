@@ -10,7 +10,7 @@ title = "Curriculum Vitae"
     - ハードウェアセキュリティ，意図的電磁妨害，TEMPEST
 
 ## Skills
-- マイコン、SBC を用いた組み込み機器の開発
+- マイコン，SBC を用いた組み込み機器の開発
 - KiCAD を用いた回路設計
 - Inventor を用いた機械設計
 - Abaqus を用いた有限要素解析
