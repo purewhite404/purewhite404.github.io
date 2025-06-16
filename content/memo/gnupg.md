@@ -4,7 +4,7 @@ title = "文書をGnuPGで暗号化する"
 genre = "security"
 +++
 
-公開鍵暗号を使って簡単なメッセージの送受信を行う。
+公開鍵暗号を使って簡単なメッセージの送受信を行う．
 
 注意点は
 - メッセージを受け取る側が鍵を生成する
@@ -25,7 +25,7 @@ gpg --output public.key --armor --export {mail address}
 gpg --import public.key
 echo "<message you want to send>" | gpg --encrypt --armor -r {mail address} > encrypt.txt
 ```
-によってメッセージを暗号化し、`encrypt.txt` を送信する。
+によってメッセージを暗号化し，`encrypt.txt` を送信する．
 
 3. 復号（メッセージを受け取った側）
 `encrypt.txt` を受けとった後

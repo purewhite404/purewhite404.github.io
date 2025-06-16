@@ -7,4 +7,4 @@ Buildroot で OS を作ろうと思った
 - Systemd-free
 - 軽量
 
-が理由である。
+が理由である．
