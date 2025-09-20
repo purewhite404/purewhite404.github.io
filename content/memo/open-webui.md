@@ -17,7 +17,7 @@ update 手順は以下．
 ```bash
 sudo docker stop open-webui
 sudo docker rm -f open-webui
-sudo docker pull ghcr.io/open-webui/open-webui:main
+sudo docker pull ghcr.io/open-webui/open-webui:ollama
 sudo docker run -d -p 3000:8080 --gpus=all -v ollama:/root/.ollama -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:ollama
 ```
 
