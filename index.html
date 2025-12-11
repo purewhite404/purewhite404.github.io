@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>JR2HAO</title>
+    
+    <link rel="stylesheet" href="http://jr2hao.dev/style.css?h=8c8a56e27d10588f1d5e">
+    
+    
+    
+    
+</head>
+<body>
+    
+    <header class="space">
+        <h1>JR2HAO</h1>
+        
+        
+        <nav class="header-links">
+            
+            <a href="https:&#x2F;&#x2F;bsky.app&#x2F;profile&#x2F;jr2hao.dev">Bluesky<img class="icons" src="/img/bluesky.svg"></a>
+            
+            <a href="https:&#x2F;&#x2F;github.com&#x2F;purewhite404">GitHub<img class="icons" src="/img/github.svg"></a>
+            
+            <a href=".&#x2F;about">About me<img class="icons" src="/img/aboutme.svg"></a>
+            
+            
+        </nav>
+        
+    </header>
+    
+    
+    
+    
+    
+    <main>
+        
+            <p>電子工作やアマチュア無線についての記録</p>
+<h2 id="works">Works</h2>
+<ul>
+<li><a href="http://jr2hao.dev/./exif-analyzer">Exif Analyzer</a> : JPEGのEXIFから露光情報をいい感じに表示させる</li>
+</ul>
+
+        
+
+        
+        <h2>Recent posts</h2>
+        <ul>
+            
+            <li><a href="http:&#x2F;&#x2F;jr2hao.dev&#x2F;blog&#x2F;diver-osint-writeup&#x2F;">Diver OSINT CTF 2025 WriteUp</a></li>
+            
+            <li><a href="http:&#x2F;&#x2F;jr2hao.dev&#x2F;blog&#x2F;prohibit-ppap&#x2F;">企業は一刻も早くPPAPをやめろ</a></li>
+            
+            <li><a href="http:&#x2F;&#x2F;jr2hao.dev&#x2F;blog&#x2F;exif-analyzer&#x2F;">EXIFから露光を表示するアプリケーションを作った</a></li>
+            
+            <li><a href="http:&#x2F;&#x2F;jr2hao.dev&#x2F;blog&#x2F;bluesky-dns&#x2F;">Bluesky のアカウント名をjr2hao.devに設定した</a></li>
+            
+            <li><a href="http:&#x2F;&#x2F;jr2hao.dev&#x2F;blog&#x2F;buildroot-x86-64&#x2F;">Buildroot で OS を作る</a></li>
+            
+            <li><a href="http:&#x2F;&#x2F;jr2hao.dev&#x2F;blog&#x2F;intro-zola&#x2F;">ホームページに Zola を導入した</a></li>
+            
+            <li><a href="http:&#x2F;&#x2F;jr2hao.dev&#x2F;blog&#x2F;opt-transceiver&#x2F;">光モールストランシーバを改造してデジタル通信機を作った</a></li>
+            
+            <li><a href="http:&#x2F;&#x2F;jr2hao.dev&#x2F;blog&#x2F;nixos&#x2F;">NixOSをVirtualBoxにインストールする</a></li>
+            
+        </ul>
+        <p><a href="http:&#x2F;&#x2F;jr2hao.dev&#x2F;blog&#x2F;">View all</a></p>
+        
+
+        
+        <h2>Technical notes</h2>
+        <ul>
+            
+            <li><a href="http:&#x2F;&#x2F;jr2hao.dev&#x2F;memo&#x2F;ddcommand&#x2F;">dd と ddrescueについて</a></li>
+            
+            <li><a href="http:&#x2F;&#x2F;jr2hao.dev&#x2F;memo&#x2F;iqexport&#x2F;">FSV3007 IQデータ出力ポイント数増加の原因</a></li>
+            
+            <li><a href="http:&#x2F;&#x2F;jr2hao.dev&#x2F;memo&#x2F;matlab-font&#x2F;">Matlab のグラフプロットでフォント指定</a></li>
+            
+            <li><a href="http:&#x2F;&#x2F;jr2hao.dev&#x2F;memo&#x2F;open-webui&#x2F;">open webui で model をpull できなかった</a></li>
+            
+            <li><a href="http:&#x2F;&#x2F;jr2hao.dev&#x2F;memo&#x2F;usb-format&#x2F;">USBメモリがオシロスコープで認識されない場合は，Linuxでフォーマットすると良い</a></li>
+            
+            <li><a href="http:&#x2F;&#x2F;jr2hao.dev&#x2F;memo&#x2F;uhd-detection&#x2F;">usrp_b200_fw.hex detection</a></li>
+            
+            <li><a href="http:&#x2F;&#x2F;jr2hao.dev&#x2F;memo&#x2F;gnupg&#x2F;">文書をGnuPGで暗号化する</a></li>
+            
+            <li><a href="http:&#x2F;&#x2F;jr2hao.dev&#x2F;memo&#x2F;d-drive-home&#x2F;">Windowsのホームフォルダを別ドライブに移す</a></li>
+            
+        </ul>
+        <p><a href="http:&#x2F;&#x2F;jr2hao.dev&#x2F;memo&#x2F;">View all</a></p>
+        
+    </main>
+    
+    
+    <div class="dark-mode-buttons">
+        <button class="dark-mode-button" id="dark-mode-on"><img src="http://jr2hao.dev/dark_mode.svg" width="24" height="24" alt="Dark mode" aria-label="dark mode toggle" title="Dark mode"></button>
+        <button class="dark-mode-button" id="dark-mode-off"><img src="http://jr2hao.dev/light_mode.svg" width="24" height="24" alt="Light mode" aria-label="light mode toggle" title="Light mode"></button>
+    </div>
+    <script>
+        const cls = document.querySelector("html").classList;
+        const sessionTheme = sessionStorage.getItem("theme");
+
+        function setDark() {
+            cls.add("dark-mode");
+            cls.remove("light-mode");
+            sessionStorage.setItem("theme", "dark");
+        }
+        function setLight() {
+            cls.add("light-mode");
+            cls.remove("dark-mode");
+            sessionStorage.setItem("theme", "light");
+        }
+
+        if (sessionTheme === "dark") {
+            setDark();
+        } else if (sessionTheme === "light") {
+            setLight();
+        } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            setDark();
+        }
+
+        document.getElementById("dark-mode-on").addEventListener("click", function(e) {
+            setDark();
+        });
+        document.getElementById("dark-mode-off").addEventListener("click", function(e) {
+            setLight();
+        });
+    </script>
+    <noscript>
+        <style>
+            .dark-mode-buttons {
+                display: none;
+            }
+        </style>
+    </noscript>
+    <footer>
+            <small>
+                2025 jr2hao all rights reserved
+            </small>
+    </footer>
+</body>
+</html>

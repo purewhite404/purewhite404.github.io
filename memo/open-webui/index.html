@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>JR2HAO | open webui で model をpull できなかった</title>
+    
+<link rel="stylesheet" href="http://jr2hao.dev/style.css?h=8c8a56e27d10588f1d5e">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js" integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+          // customised options
+          // • auto-render specific keys, e.g.:
+          delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false},
+              {left: '\\(', right: '\\)', display: false},
+              {left: '\\[', right: '\\]', display: true}
+          ],
+          // • rendering keys, e.g.:
+          throwOnError : false
+        });
+    });
+</script>
+
+    
+    
+    
+</head>
+<body>
+    
+<header class="space">
+    <a href="javascript:history.back();">&LeftArrow; Back</a>
+</header>
+
+    
+<main>
+    <h1>open webui で model をpull できなかった</h1>
+    
+    <div class="space"></div>
+    <h2 id="shi-xiang">事象</h2>
+<p>windows11 上の WSL ubuntu 24.04.3 の docker で openwebui を動かしており，
+それをUpdateしたかったので<a href="https://docs.openwebui.com/getting-started/updating/">公式</a>どおりupdateし
+<code>docker run -d -p 3000:8080 -v open-webui:/app/backend/data --name open-webui ghcr.io/open-webui/open-webui:main</code>
+でrunしたが，過去に使っていたLLMモデルが表示されず，新しく ollama.com から pull することもできなかった（その項目が表示されなかった）．</p>
+<h2 id="jie-jue-fang-fa">解決方法</h2>
+<p>この<a href="https://qiita.com/taro_yamada_dewanokami/items/19326b535c3f40482696">記事</a>にかかれているようにOllama 専用イメージ open-webui:ollama を動かすことで解決．</p>
+<p>update 手順は以下．</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">sudo</span><span> docker stop open-webui
+</span><span style="color:#bf616a;">sudo</span><span> docker rm</span><span style="color:#bf616a;"> -f</span><span> open-webui
+</span><span style="color:#bf616a;">sudo</span><span> docker pull ghcr.io/open-webui/open-webui:ollama
+</span><span style="color:#bf616a;">sudo</span><span> docker run</span><span style="color:#bf616a;"> -d -p</span><span> 3000:8080</span><span style="color:#bf616a;"> --gpus</span><span>=all</span><span style="color:#bf616a;"> -v</span><span> ollama:/root/.ollama</span><span style="color:#bf616a;"> -v</span><span> open-webui:/app/backend/data</span><span style="color:#bf616a;"> --name</span><span> open-webui</span><span style="color:#bf616a;"> --restart</span><span> always ghcr.io/open-webui/open-webui:ollama
+</span></code></pre>
+<h2 id="bu-zu">補足</h2>
+<p>もしかしたら最初に導入したときにその記事を参照したからかもしれない．</p>
+<h2 id="nazedong-kunokachatgptgashuo-ming-sitekureta">なぜ動くのかChatGPTが説明してくれた</h2>
+<p>なるほど、やっと動いたのですね！🎉
+では今回の違いを整理して、なぜこのコマンドで成功したかを解説します。</p>
+<hr />
+<h2 id="1-wei-inopointo">1. 違いのポイント</h2>
+<p>あなたが動かしたコマンド：</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">docker</span><span> run</span><span style="color:#bf616a;"> -d -p</span><span> 3000:8080</span><span style="color:#bf616a;"> --gpus</span><span>=all \
+</span><span style="color:#bf616a;">  -v</span><span> ollama:/root/.ollama \
+</span><span style="color:#bf616a;">  -v</span><span> open-webui:/app/backend/data \
+</span><span style="color:#bf616a;">  --name</span><span> open-webui \
+</span><span style="color:#bf616a;">  --restart</span><span> always \
+</span><span>  ghcr.io/open-webui/open-webui:ollama
+</span></code></pre>
+<p>以前の失敗したコマンドとの違いは大きく分けて3つあります：</p>
+<hr />
+<h3 id="small-blue-diamond-imezinowei-i">🔹 ① イメージの違い</h3>
+<ul>
+<li>以前：<code>ghcr.io/open-webui/open-webui:main</code></li>
+<li>今回：<code>ghcr.io/open-webui/open-webui:ollama</code></li>
+</ul>
+<p><strong>違い</strong>：</p>
+<ul>
+<li>
+<p><code>main</code> → ベースの Open WebUI イメージ、Ollama 連携はオプション</p>
+</li>
+<li>
+<p><code>ollama</code> → Ollama 専用統合ビルド済み</p>
+<ul>
+<li>Ollama API に接続するための依存ライブラリや設定が初めから含まれている</li>
+<li>Docker コンテナ内で Ollama 接続用の内部処理が組み込まれている</li>
+</ul>
+</li>
+</ul>
+<p>→ つまり <strong>Ollama 専用のイメージを使うことで、接続設定やネットワーク問題を回避できるようになっている</strong></p>
+<hr />
+<h3 id="small-blue-diamond-boriyumumauntonowei-i">🔹 ② ボリュームマウントの違い</h3>
+<ul>
+<li>
+<p>Ollama のデータディレクトリを <code>/root/.ollama</code> にマウントしています：</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">-v</span><span> ollama:/root/.ollama
+</span></code></pre>
+</li>
+<li>
+<p>これにより <strong>コンテナ内部で Ollama のモデル情報や設定を正しく認識</strong>できる</p>
+</li>
+<li>
+<p>以前のコマンドは Ollama データをマウントしていなかったため、コンテナ内部から Ollama モデルにアクセスできなかった</p>
+</li>
+</ul>
+<hr />
+<h3 id="small-blue-diamond-gpu-opusiyon">🔹 ③ GPU オプション</h3>
+<ul>
+<li><code>--gpus=all</code></li>
+<li>Ollama やモデル推論に GPU を使う場合の設定</li>
+<li>今回は GPU がある環境なので、推論も問題なく動作</li>
+</ul>
+<blockquote>
+<p>これは接続自体とは直接関係ありませんが、推論性能のために重要です</p>
+</blockquote>
+<hr />
+<h2 id="2-nazejin-hui-dong-itanoka">2. なぜ今回動いたのか</h2>
+<ul>
+<li>Ollama 専用イメージ <code>open-webui:ollama</code> は <strong>内部で Ollama 接続が組み込まれており、WSL 内 Docker でもホストIP問題を意識せず動作</strong></li>
+<li>Ollama のデータディレクトリをマウントしているので、コンテナ内からモデルが直接参照可能</li>
+<li>そのため、以前のような「Network Problem」は発生しなかった</li>
+</ul>
+<hr />
+<h3 id="matomeruto">まとめると</h3>
+<table><thead><tr><th>項目</th><th>以前のコマンド</th><th>今回のコマンド</th></tr></thead><tbody>
+<tr><td>Docker イメージ</td><td><code>open-webui:main</code></td><td><code>open-webui:ollama</code>（Ollama 統合済）</td></tr>
+<tr><td>Ollama データ</td><td>マウントなし</td><td><code>/root/.ollama</code> をマウント</td></tr>
+<tr><td>API 接続</td><td>手動設定必要</td><td>内部で自動接続</td></tr>
+<tr><td>GPU</td><td>なし</td><td><code>--gpus=all</code></td></tr>
+<tr><td>結果</td><td>Network Problem</td><td>正常に接続＆動作</td></tr>
+</tbody></table>
+<hr />
+<p>💡 <strong>結論</strong>
+今回動いたのは <strong>「Ollama 専用イメージ + Ollama データのボリュームマウント」</strong> のおかげです。</p>
+<ul>
+<li>以前の main イメージでは、WSL + Docker の環境でホストの Ollama にアクセスするのが難しかった</li>
+<li>専用イメージを使うことで、コンテナ内部から Ollama に直接アクセスできるようになった</li>
+</ul>
+<hr />
+
+</main>
+
+    <div class="dark-mode-buttons">
+        <button class="dark-mode-button" id="dark-mode-on"><img src="http://jr2hao.dev/dark_mode.svg" width="24" height="24" alt="Dark mode" aria-label="dark mode toggle" title="Dark mode"></button>
+        <button class="dark-mode-button" id="dark-mode-off"><img src="http://jr2hao.dev/light_mode.svg" width="24" height="24" alt="Light mode" aria-label="light mode toggle" title="Light mode"></button>
+    </div>
+    <script>
+        const cls = document.querySelector("html").classList;
+        const sessionTheme = sessionStorage.getItem("theme");
+
+        function setDark() {
+            cls.add("dark-mode");
+            cls.remove("light-mode");
+            sessionStorage.setItem("theme", "dark");
+        }
+        function setLight() {
+            cls.add("light-mode");
+            cls.remove("dark-mode");
+            sessionStorage.setItem("theme", "light");
+        }
+
+        if (sessionTheme === "dark") {
+            setDark();
+        } else if (sessionTheme === "light") {
+            setLight();
+        } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            setDark();
+        }
+
+        document.getElementById("dark-mode-on").addEventListener("click", function(e) {
+            setDark();
+        });
+        document.getElementById("dark-mode-off").addEventListener("click", function(e) {
+            setLight();
+        });
+    </script>
+    <noscript>
+        <style>
+            .dark-mode-buttons {
+                display: none;
+            }
+        </style>
+    </noscript>
+    <footer>
+            <small>
+                2025 jr2hao all rights reserved
+            </small>
+    </footer>
+</body>
+</html>

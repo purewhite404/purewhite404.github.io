@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>JR2HAO | FSV3007 IQデータ出力ポイント数増加の原因</title>
+    
+<link rel="stylesheet" href="http://jr2hao.dev/style.css?h=8c8a56e27d10588f1d5e">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js" integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+          // customised options
+          // • auto-render specific keys, e.g.:
+          delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false},
+              {left: '\\(', right: '\\)', display: false},
+              {left: '\\[', right: '\\]', display: true}
+          ],
+          // • rendering keys, e.g.:
+          throwOnError : false
+        });
+    });
+</script>
+
+    
+    
+    
+</head>
+<body>
+    
+<header class="space">
+    <a href="javascript:history.back();">&LeftArrow; Back</a>
+</header>
+
+    
+<main>
+    <h1>FSV3007 IQデータ出力ポイント数増加の原因</h1>
+    
+    <div class="space"></div>
+    <p>FSV3007でASCII Trace ExportするとIQ信号のサンプル数が倍になる問題があった．</p>
+<p>結論は，Trace 設定で Detector を Sample に変更すると良い．</p>
+<hr />
+<p>以下gemini との問答より引用</p>
+<blockquote>
+<p>FSV3007で時間ドメインのIQ信号を100001ポイント測定し，ASCII Trace ExportでIQ信号をCSV ファイルにエクスポートしたところ，倍の200002ポイントのデータが出力された．なぜか？</p>
+</blockquote>
+<p>Gemini Pro 3 回答:</p>
+<p><strong>ASCII Trace Export</strong>を使用してエクスポートされたデータが、測定点数（100001ポイント）の2倍である<strong>200002ポイント</strong>になった理由は、トレースの検波モード（Detector）が <strong>AUTOPEAK（オートピーク）</strong> に設定されているためであると考えられます。</p>
+<p>ご提示いただいたCSVファイル（<code>20251123_IQ_nosig.CSV</code>）のヘッダー情報からも、その設定が確認できます。</p>
+<h3 id="ju-ti-de-nayuan-yin">具体的な原因</h3>
+<ol>
+<li>
+<p><strong>Detector（検波）設定がAUTOPEAKになっている</strong></p>
+<ul>
+<li>アップロードされたファイルのヘッダーに <code>Detector,AUTOPEAK</code> という記載があります。</li>
+<li><strong>Auto Peak</strong> 検波モードは、1つの測定ポイント（スイープポイント）に対して、その区間内の<strong>最大値（Max）と最小値（Min）の2つの値</strong>を保持・表示する仕組みです。これは、画面表示上で信号のピークを取りこぼさないための機能です。</li>
+<li>その結果、トレースデータ（Trace Export）として出力する際も、1ポイントにつき2つの値（MaxとMin）が出力されるため、設定したポイント数（100001）の2倍である <strong>200002ポイント</strong> のデータが出力されます。</li>
+</ul>
+</li>
+<li>
+<p><strong>「Trace Export」と「I/Q Export」の違い</strong></p>
+<ul>
+<li><strong>ASCII Trace Export</strong> は、スペクトラムアナライザの「画面に表示されているトレース波形（処理後のデータ）」を出力する機能です。そのため、検波モード（Detector）の影響を受けます。</li>
+<li>一方、時間ドメインの純粋なIQデータ（1サンプルにつきIとQのペアが1つ）を取得したい場合は、通常「Trace Export」ではなく、<strong>「I/Q Export」</strong>（または Export I/Q Data）機能を使用します。</li>
+</ul>
+</li>
+</ol>
+<h3 id="jie-jue-ce-100001pointonodetawoqu-de-suruniha">解決策（100001ポイントのデータを取得するには）</h3>
+<p>純粋な100001ポイントのIQ信号データを取得したい場合は、以下のいずれかの方法を推奨します。</p>
+<ul>
+<li><strong>推奨：I/Q Export 機能を使用する</strong>
+<ul>
+<li>[Save/Recall] メニューなどにある <strong>Export</strong> 機能の中から、Trace Export ではなく <strong>"I/Q Export"</strong> を選択して出力してください。これにより、Detectorの設定に関わらず、メモリに取り込まれた生のIQデータ（100001ポイント）がそのまま出力されます。</li>
+</ul>
+</li>
+<li><strong>Trace Export を使い続ける場合</strong>
+<ul>
+<li>Trace Export を使用する必要がある場合は、Trace設定で <strong>Detector</strong> を <strong>"Sample"</strong>（サンプル）に変更してください。Sample検波であれば、1ポイントにつき1つの値しか保持しないため、出力データも100001ポイントになります。</li>
+</ul>
+</li>
+</ul>
+
+</main>
+
+    <div class="dark-mode-buttons">
+        <button class="dark-mode-button" id="dark-mode-on"><img src="http://jr2hao.dev/dark_mode.svg" width="24" height="24" alt="Dark mode" aria-label="dark mode toggle" title="Dark mode"></button>
+        <button class="dark-mode-button" id="dark-mode-off"><img src="http://jr2hao.dev/light_mode.svg" width="24" height="24" alt="Light mode" aria-label="light mode toggle" title="Light mode"></button>
+    </div>
+    <script>
+        const cls = document.querySelector("html").classList;
+        const sessionTheme = sessionStorage.getItem("theme");
+
+        function setDark() {
+            cls.add("dark-mode");
+            cls.remove("light-mode");
+            sessionStorage.setItem("theme", "dark");
+        }
+        function setLight() {
+            cls.add("light-mode");
+            cls.remove("dark-mode");
+            sessionStorage.setItem("theme", "light");
+        }
+
+        if (sessionTheme === "dark") {
+            setDark();
+        } else if (sessionTheme === "light") {
+            setLight();
+        } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            setDark();
+        }
+
+        document.getElementById("dark-mode-on").addEventListener("click", function(e) {
+            setDark();
+        });
+        document.getElementById("dark-mode-off").addEventListener("click", function(e) {
+            setLight();
+        });
+    </script>
+    <noscript>
+        <style>
+            .dark-mode-buttons {
+                display: none;
+            }
+        </style>
+    </noscript>
+    <footer>
+            <small>
+                2025 jr2hao all rights reserved
+            </small>
+    </footer>
+</body>
+</html>

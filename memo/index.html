@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>JR2HAO | Technical notes</title>
+    
+<link rel="stylesheet" href="http://jr2hao.dev/style.css?h=8c8a56e27d10588f1d5e">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js" integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+          // customised options
+          // • auto-render specific keys, e.g.:
+          delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false},
+              {left: '\\(', right: '\\)', display: false},
+              {left: '\\[', right: '\\]', display: true}
+          ],
+          // • rendering keys, e.g.:
+          throwOnError : false
+        });
+    });
+</script>
+
+    
+    
+    
+</head>
+<body>
+    
+<header class="space">
+    <a href="javascript:history.back();">&LeftArrow; Back</a>
+</header>
+
+    
+<main>
+    <h1>Technical notes</h1>
+    
+    
+    <h2>Linux</h2>
+    <ul>
+        
+        <li><a href="http:&#x2F;&#x2F;jr2hao.dev&#x2F;memo&#x2F;ddcommand&#x2F;">dd と ddrescueについて</a></li>
+        
+    </ul>
+    
+    <h2>FSV3007</h2>
+    <ul>
+        
+        <li><a href="http:&#x2F;&#x2F;jr2hao.dev&#x2F;memo&#x2F;iqexport&#x2F;">FSV3007 IQデータ出力ポイント数増加の原因</a></li>
+        
+    </ul>
+    
+    <h2>Matlab</h2>
+    <ul>
+        
+        <li><a href="http:&#x2F;&#x2F;jr2hao.dev&#x2F;memo&#x2F;matlab-font&#x2F;">Matlab のグラフプロットでフォント指定</a></li>
+        
+    </ul>
+    
+    <h2>Docker</h2>
+    <ul>
+        
+        <li><a href="http:&#x2F;&#x2F;jr2hao.dev&#x2F;memo&#x2F;open-webui&#x2F;">open webui で model をpull できなかった</a></li>
+        
+    </ul>
+    
+    <h2>Windows</h2>
+    <ul>
+        
+        <li><a href="http:&#x2F;&#x2F;jr2hao.dev&#x2F;memo&#x2F;usb-format&#x2F;">USBメモリがオシロスコープで認識されない場合は，Linuxでフォーマットすると良い</a></li>
+        
+        <li><a href="http:&#x2F;&#x2F;jr2hao.dev&#x2F;memo&#x2F;uhd-detection&#x2F;">usrp_b200_fw.hex detection</a></li>
+        
+        <li><a href="http:&#x2F;&#x2F;jr2hao.dev&#x2F;memo&#x2F;d-drive-home&#x2F;">Windowsのホームフォルダを別ドライブに移す</a></li>
+        
+    </ul>
+    
+    <h2>security</h2>
+    <ul>
+        
+        <li><a href="http:&#x2F;&#x2F;jr2hao.dev&#x2F;memo&#x2F;gnupg&#x2F;">文書をGnuPGで暗号化する</a></li>
+        
+    </ul>
+    
+    
+</main>
+
+    <div class="dark-mode-buttons">
+        <button class="dark-mode-button" id="dark-mode-on"><img src="http://jr2hao.dev/dark_mode.svg" width="24" height="24" alt="Dark mode" aria-label="dark mode toggle" title="Dark mode"></button>
+        <button class="dark-mode-button" id="dark-mode-off"><img src="http://jr2hao.dev/light_mode.svg" width="24" height="24" alt="Light mode" aria-label="light mode toggle" title="Light mode"></button>
+    </div>
+    <script>
+        const cls = document.querySelector("html").classList;
+        const sessionTheme = sessionStorage.getItem("theme");
+
+        function setDark() {
+            cls.add("dark-mode");
+            cls.remove("light-mode");
+            sessionStorage.setItem("theme", "dark");
+        }
+        function setLight() {
+            cls.add("light-mode");
+            cls.remove("dark-mode");
+            sessionStorage.setItem("theme", "light");
+        }
+
+        if (sessionTheme === "dark") {
+            setDark();
+        } else if (sessionTheme === "light") {
+            setLight();
+        } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            setDark();
+        }
+
+        document.getElementById("dark-mode-on").addEventListener("click", function(e) {
+            setDark();
+        });
+        document.getElementById("dark-mode-off").addEventListener("click", function(e) {
+            setLight();
+        });
+    </script>
+    <noscript>
+        <style>
+            .dark-mode-buttons {
+                display: none;
+            }
+        </style>
+    </noscript>
+    <footer>
+            <small>
+                2025 jr2hao all rights reserved
+            </small>
+    </footer>
+</body>
+</html>
