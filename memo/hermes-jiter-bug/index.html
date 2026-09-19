@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>JR2HAO | Hermes agent on alpine linux で claude model を使用時に web search すると segmentation fault するバグ</title>
+    
+<link rel="stylesheet" href="http://jr2hao.dev/style.css?h=8c8a56e27d10588f1d5e">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js" integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+          // customised options
+          // • auto-render specific keys, e.g.:
+          delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false},
+              {left: '\\(', right: '\\)', display: false},
+              {left: '\\[', right: '\\]', display: true}
+          ],
+          // • rendering keys, e.g.:
+          throwOnError : false
+        });
+    });
+</script>
+
+    
+    
+    
+</head>
+<body>
+    
+<header class="space">
+    <a href="javascript:history.back();">&LeftArrow; Back</a>
+</header>
+
+    
+<main>
+    <h1>Hermes agent on alpine linux で claude model を使用時に web search すると segmentation fault するバグ</h1>
+    
+    <div class="space"></div>
+    <p>hermes agent cliを用いて検索をしたときの事象。
+<code>mcp__web_search</code>が表示された直後に segmentation fault を吐いて落ちる。
+<code>hermes --tui</code>のときは落ちはしないが、エラーをずっと繰り返す挙動をしていた。
+今回は jiter 0.13 の musl に対するバグがあるためだった。
+以下で修正できるそう。updateされたら破壊されるかも</p>
+<pre data-lang="sh" style="background-color:#2b303b;color:#c0c5ce;" class="language-sh "><code class="language-sh" data-lang="sh"><span style="color:#65737e;"># Alpine
+</span><span style="color:#bf616a;">sudo</span><span> apk add</span><span style="color:#bf616a;"> --no-cache</span><span> uv
+</span><span>
+</span><span style="color:#65737e;"># Hermesの実際のvenvに入れる
+</span><span style="color:#bf616a;">uv</span><span> pip install</span><span style="color:#bf616a;"> --python ~</span><span>/.hermes/hermes-agent/venv/bin/python &#39;</span><span style="color:#a3be8c;">jiter&gt;=0.14,&lt;1</span><span>&#39;
+</span><span>
+</span><span style="color:#65737e;"># 確認
+</span><span style="color:#bf616a;">~/.hermes/hermes-agent/venv/bin/python -c </span><span>\
+</span><span>&#39;</span><span style="color:#a3be8c;">import importlib.metadata as m; print(m.version(&quot;jiter&quot;))</span><span>&#39;
+</span></code></pre>
+<p>「Hermesの更新・再インストールで古いlockfileが復元される場合は、上記を再実行してください。」とのこと。</p>
+
+</main>
+
+    <div class="dark-mode-buttons">
+        <button class="dark-mode-button" id="dark-mode-on"><img src="http://jr2hao.dev/dark_mode.svg" width="24" height="24" alt="Dark mode" aria-label="dark mode toggle" title="Dark mode"></button>
+        <button class="dark-mode-button" id="dark-mode-off"><img src="http://jr2hao.dev/light_mode.svg" width="24" height="24" alt="Light mode" aria-label="light mode toggle" title="Light mode"></button>
+    </div>
+    <script>
+        const cls = document.querySelector("html").classList;
+        const sessionTheme = sessionStorage.getItem("theme");
+
+        function setDark() {
+            cls.add("dark-mode");
+            cls.remove("light-mode");
+            sessionStorage.setItem("theme", "dark");
+        }
+        function setLight() {
+            cls.add("light-mode");
+            cls.remove("dark-mode");
+            sessionStorage.setItem("theme", "light");
+        }
+
+        if (sessionTheme === "dark") {
+            setDark();
+        } else if (sessionTheme === "light") {
+            setLight();
+        } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            setDark();
+        }
+
+        document.getElementById("dark-mode-on").addEventListener("click", function(e) {
+            setDark();
+        });
+        document.getElementById("dark-mode-off").addEventListener("click", function(e) {
+            setLight();
+        });
+    </script>
+    <noscript>
+        <style>
+            .dark-mode-buttons {
+                display: none;
+            }
+        </style>
+    </noscript>
+    <footer>
+            <small>
+                2025 jr2hao all rights reserved
+            </small>
+    </footer>
+</body>
+</html>

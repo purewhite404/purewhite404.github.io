@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>JR2HAO | NixOSをVirtualBoxにインストールする</title>
+    
+<link rel="stylesheet" href="http://jr2hao.dev/style.css?h=8c8a56e27d10588f1d5e">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js" integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+          // customised options
+          // • auto-render specific keys, e.g.:
+          delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false},
+              {left: '\\(', right: '\\)', display: false},
+              {left: '\\[', right: '\\]', display: true}
+          ],
+          // • rendering keys, e.g.:
+          throwOnError : false
+        });
+    });
+</script>
+
+    
+    
+    
+</head>
+<body>
+    
+<header class="space">
+    <a href="javascript:history.back();">&LeftArrow; Back</a>
+</header>
+
+    
+<main>
+    <h1>NixOSをVirtualBoxにインストールする</h1>
+    
+    <p class="secondary small">
+        created at 2019&#x2F;04&#x2F;01
+        , updated at 2025&#x2F;02&#x2F;03
+
+        
+        
+        
+
+        
+    </p>
+    
+    <div class="space"></div>
+    <p>ツイッターで時々耳にしていたNixOSをVirtualBoxにインストールします．今回はminimal installerを使います．目標は私が思う最低限のインストール，即ち一般ユーザからログインしてsudoを使える状態にします．</p>
+<p>VirtualBoxは使える前提とし，EFIブートでの環境を構築します．</p>
+<p>なお英語のつづりに自信がないのでコマンドやパスのつづりが間違っている可能性があります．シェルのタブ補完を有効活用しましょう．</p>
+<h3 id="insutoranoqu-de">インストーラの取得</h3>
+<p><a href="https://nixos.org/nixos/download.html">Getting NixOS</a> ダウンロードページ</p>
+<p>なお "VirtualBox appliances" と書かれた仮想化に適した（？）インストーラもありますが，そちらはX11とKDE Plasma5が入っているバージョンしかなく，その分サイズが大きくなります．今回，GUIは必要ないので通常インストール用isoの "Minimal installation CD, 64-bit Intel/AMD" をダウンロードします（この記事では nixos-minimal-18.09.2436.395a543f360-x86_64-linux.iso を使っておりサイズは530MBでした，小さいですね）．</p>
+<p>インストール方法が変わっていたり，パッケージが存在しなかったりします．公式マニュアルの <a href="https://nixos.org/nixos/manual/">NixOS manual</a> （英語）を適宜参照してください．</p>
+<h3 id="virtualboxnoshe-ding">VirtualBoxの設定</h3>
+<p>EFIの時代はもう来ちゃってるんだよね…</p>
+<p>そもそもなぜVirtualBoxを使うのかといえば実機インストールの練習のためなので環境も実機に合わせていかなければなりません．ならば最近のPCに合わせてUEFIを使いましょう，というのは自然な流れです…だと思います．ということでVirtualBoxをEFIブートにします．</p>
+<p>まず， <a href="https://nixos.org/nixos/manual/index.html#sec-instaling-virtualbox-guest">NixOS manual #2.5.3 Installing in a VirtualBox guest</a> を参照しながらメモリ，ディスク容量などを決めます（私はメモリ4096MB，HDD可変16GBに設定しました）．</p>
+<p>次に，設定→システムのマザーボードタブを選び「EFIを有効化」にチェックします．これでEFIで起動します．なおこの設定をしないとBIOSでブートしてしまいUEFIブートローダのインストールが困難になるので忘れないようにしましょう．</p>
+<p>また，設定→システムのプロセッサータブから「PAE/NXを有効化」にチェック，設定→システムのアクセラレーションタブから「VT-x/AMD-Vを有効化」にチェックします．参考 : <a href="https://nixos.org/nixos/manual/index.html#sec-instaling-virtualbox-guest">NixOS manual</a></p>
+<p>最後にダウンロードしたisoイメージをストレージのIDEコントローラに入れて設定は完了です．</p>
+<h3 id="qi-dong">起動</h3>
+<p>なぜこんな見出しを付けたのかと言うと，VirtualBoxではnomodesetで起動しないと途中で画面がフリーズするからです．</p>
+<p>起動するとモード選択の画面が出ます．10秒で自動起動してしまうので↓キーを押します．そうすると"NixOS ... Installer (nomodeset)"が選択されます．エンターキーを押します．無事rootでログインできるかと思います．auto loginなのでパスワードは要りません．</p>
+<p>もし普通に起動しても問題ないならそれでいいです．</p>
+<h3 id="insutoru">インストール</h3>
+<p>日本語キーボードなら<code>loadkeys</code>で日本語キーボードをロードします:</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span># loadkeys jp106
+</span></code></pre>
+<p>またネットワーク接続を確認します:</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span># ip a  
+</span><span># ping 1.1.1.1
+</span></code></pre>
+<p>もし接続がうまく言ってないのであれば <a href="https://wiki.archlinux.jp/index.php/%E3%83%8D%E3%83%83%E3%83%88%E3%83%AF%E3%83%BC%E3%82%AF%E8%A8%AD%E5%AE%9A">ネットワーク設定 - ArchWiki</a> などを見てください．Archと同じくNixOSは<code>systemctl</code>が使えます．</p>
+<h4 id="pateisiyoningu">パーティショニング</h4>
+<p>EFIブートなのでパーティションテーブルはGPTを使います．私は<code>gdisk</code>のほうがGUIDコード<code>の選択などがわかりやすいと思っているので</code>gdiskでパーティションを切ります．<a href="https://www.archlinux.site/2016/03/arch-linux-uefi-gpt-xfs.html">Arch Linuxインストール （OSインストール編）| UEFI, GPT, XFSを使用してインストール | 普段使いのArch Linux</a> を参考にしました．ワンライナーがお好みの方は公式マニュアルのように<code>parted</code>を使います．</p>
+<p>今回はシンプルにルートパーティションとブートパーティションのみを作ります．最近のPCはメモリ容量が大きいのでハイバネーションをしないかぎりスワップはいらないのではないかと思います．実際，自動インストールしたLinuxMintを使っていた頃，システムモニタを見てもスワップが使われていたときを見たことがありません．もっとも私は詳しくないのでこんな場合に必要だ，というのを知っている方はコメントください．</p>
+<p>閑話休題．<code>lsblk</code>でディスクを確認します:</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span># lsblk  
+</span><span>sda     8:0    0    16G  0 disk
+</span></code></pre>
+<p>HDDを16GBに設<code>定したのでこう書かれていました．この場合/dev/sdaを設定することになります．</code>gdiskでパーティションを切ります．まずはパーティションテーブルを作ります:</p>
+<pre data-lang="# gdisk /dev/sda" style="background-color:#2b303b;color:#c0c5ce;" class="language-# gdisk /dev/sda "><code class="language-# gdisk /dev/sda" data-lang="# gdisk /dev/sda"><span>Command (? for help):o
+</span><span>This option ...  
+</span><span>Proceed? (Y/N):y
+</span></code></pre>
+<p>次にパーティションを切ります．16GBのうち256MBをブートパーティションに割り当て，残りをルートパーティションに割り当てます:</p>
+<pre data-lang="Command (? for help):n" style="background-color:#2b303b;color:#c0c5ce;" class="language-Command (? for help):n "><code class="language-Command (? for help):n" data-lang="Command (? for help):n"><span>Partition number (...) :  
+</span><span>First sector (...) :  
+</span><span>Last sector (...) : +256M
+</span><span>Hex code or GUID (...) : ef00
+</span><span>  
+</span><span>Command (? for help):n
+</span><span>Partition number (...) :  
+</span><span>First sector (...) :  
+</span><span>Last sector (...) :  
+</span><span>Hex code or GUID (...) :
+</span></code></pre>
+<p><code>:</code>の後に何も書いていない箇所は何も書かなくていいです．最後に切られたパーティションをディスクに書き込みます:</p>
+<pre data-lang="Command (? for help):w" style="background-color:#2b303b;color:#c0c5ce;" class="language-Command (? for help):w "><code class="language-Command (? for help):w" data-lang="Command (? for help):w"><span>Final check complete. About...  
+</span><span>Do you want to proceed?(Y/N):y
+</span><span>OK; writing...  
+</span><span>The operation has completed successfully.
+</span></code></pre>
+<p>これでパーティションが切られました．<code>lsblk</code>で確認します:</p>
+<pre data-lang="# lsblk" style="background-color:#2b303b;color:#c0c5ce;" class="language-# lsblk "><code class="language-# lsblk" data-lang="# lsblk"><span>sda      8:0    0     16G  0 disk  
+</span><span>├sda1   8:1    0    256M  0 part  
+</span><span>└sda2   8:2    0   15.8G  0 part
+</span></code></pre>
+<p>パーティションが2つできました．</p>
+<h4 id="huomatuto">フォーマット</h4>
+<p>パーティションのフォーマットをします．ブートはexFAT（EFIはこれでないといけない），ルートはお好みのフォーマッタでフォーマットします．私はいつも何も考えずext4を選択しています:</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span># mkfs.fat -F 32 /dev/sda1  
+</span><span># mkfs.ext4 /dev/sda2
+</span></code></pre>
+<p>フォーマットされました．</p>
+<h4 id="maunto">マウント</h4>
+<p>sda2がルート，sda1がブートであることに注意してマウントします:</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span># mount /dev/sda2 /mnt  
+</span><span># mkdir /mnt/boot  
+</span><span># mount /dev/sda1 /mnt/boot  
+</span><span># lsblk  
+</span><span>sda      8:0    0     16G  0 disk  
+</span><span>├sda1   8:1    0    256M  0 part /mnt/boot  
+</span><span>└sda2   8:2    0   15.8G  0 part /mnt
+</span></code></pre>
+<p>マウントされました．</p>
+<h4 id="sisutemunoinsutoru">システムのインストール</h4>
+<p>NixOSの肝であるconfiguration.nixを生成します:</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span># nixos-generate-config --root /mnt
+</span></code></pre>
+<p>生成されました．パスは /mnt/etc/nixos/configuration.nix です．ここで公式マニュアルは</p>
+<p>"If you have network access, you can also install other editors — for instance, you can install Emacs by running <code>nix-env -i emacs</code>"</p>
+<p>とも言っていますが，ここでインストールされるエディタはシステムにインストールされない，即ち一時的なものであるのでVim,Emacsその他CUIエディタでないと嫌だ，またはnanoが嫌いという人以外はインストーラ付属のnanoを使えばいいと思います．</p>
+<p>そして何を編集するのかというと，EFIの場合生成されたconfiguration.nix内のパラメータ，<code>boot.loader.systemd-boot.enable</code> の値です．これはデフォルトで<code>true</code>になっているはずで，そのままでいいです:</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span># grep systemd-boot /mnt/etc/nixos/configuration.nix  
+</span><span>  boot.loader.systemd-boot.enable = true;
+</span></code></pre>
+<p>しかし日本語キーボードユーザはキーボード設定をjp106キーボードにしなければならないのでその設定を書き込みます．#でコメントアウトされている行に<code>i18n = ...</code>から始まるブロックがテンプレートとして書いてあるので先頭の#を消してKeyMapを<code>us</code>から<code>jp106</code>に直します:</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>i18n = {  
+</span><span>  consoleFont = &quot;Lat2-Terminus16&quot;;  
+</span><span>  consoleKeyMap = &quot;jp106&quot;;  
+</span><span>  defaultLocale = &quot;en_US.UTF-8&quot;;  
+</span><span>}
+</span></code></pre>
+<p>このとき<code>defaultLocale</code>は変えません．インストール後に文字化けを起こすからです．ロケールは日本語フォントを入れてから変えます．</p>
+<p>またVirtualBoxを使っている人は適当な行に以下を追加します:</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>boot.kernelParams = [&quot;nomodeset&quot;];
+</span></code></pre>
+<p>これは起動でみたnomodesetです．そう，NixOSはカーネルパラメータも含めシステム全体をすべてこのconfiguration.nixファイルで扱います．一括で扱えるのでとても楽そうです．しかしFile Hierarchy Standard(FHS)には準拠していません（<a href="https://en.wikipedia.org/wiki/NixOS#Implementation">NixOS - Wikipedia 3 #Implementation</a>）．</p>
+<p>これらを書き込んだらシステムのインストールです:</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span># nixos-install
+</span></code></pre>
+<p>最小限のシステムなので比較的早く終わるはずです．最後にrootのパスワードの設定が促されるのでrootパスワードを設定します．終わったら再起動します:</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span># reboot
+</span></code></pre>
+<p>すると今度はインストールディスクと打って変わって地味なシンプルなsystemd-bootのブートローダが起動します．エンターキーを押すか5秒間だけ待ってやると起動します．ログイン画面（と言っても黒いままであるが）になったら，rootとして入ります（インストールディスクが入ったままなので，もしそちら（起動時に豪華な画面が出る方）が起動してしまったら一番下のshutdownを選択し光学ディスクドライブを空にします）．</p>
+<h4 id="edeitanoinsutoru">エディタのインストール</h4>
+<p>Vimをインストールしましょう…と矯正するのはいいけど強制するのは良くないってばあちゃんが言ってたのでVimかEmacs，または他のCUIエディタをインストールします．nanoで十分だというひとはインストールしなくていいです．パッケージのインストールのコマンドは以下です（ここではVimをインストールする）:</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span># nix-env -i vim
+</span></code></pre>
+<p>Vimがインストールされました．以降テキストの編集ではVimを使います．</p>
+<h4 id="yi-ban-yuzanozhui-jia">一般ユーザの追加</h4>
+<p>常にルートでログインするのは良くないとされているので一般ユーザを追加します．先程「NixOSはカーネルパラメータも含めシステム全体をすべてこのconfiguration.nixファイルで扱います」と言いました．だから一般ユーザの追加も<code>useradd</code>ではなく直接configuration.nixに書き込んでみたいと思います．</p>
+<p>configuration.nixにはコメントアウトされたテンプレートとして<code>users.users.guest=</code>から始まるブロックがあるので，コメントアウトを外し以下を書き込みます．</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span># vim/etc/nixos/configuration.nix  
+</span><span>  users.users._name_ = {  
+</span><span>      shell = pkgs.bash;
+</span><span>      createHome = true;
+</span><span>      home = &quot;/home/_name_&quot;;
+</span><span>      extraGroups = [&quot;wheel&quot;];
+</span><span>      isNormalUser = true;  
+</span><span>      uid = 1000;  
+</span><span>  }
+</span></code></pre>
+<p><code>_name_</code>には一般ユーザのユーザ名を入れてください．上から順番に説明します．</p>
+<h5 id="shell-pkgs-bash"><code>shell = pkgs.bash;</code></h5>
+<p>ユーザのデフォルトシェルをbashにします．zshやfishなど他のシェルをインストールし，デフォルトシェルをいずれかに変更する場合は{ }外に</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>programs._**sh_.enable = true;
+</span></code></pre>
+<p>を，{ } 内に</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>shell = pkgs._**sh_;
+</span></code></pre>
+<p>を書きます．すべてのユーザのデフォルトシェルを設定するには{ } 外に</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>users.defaultUserShell = pkgs._**sh_;
+</span></code></pre>
+<p>を書きます．</p>
+<h5 id="createhome-true"><code>createHome = true;</code></h5>
+<p>ユーザにホームディレクトリをあたえるかどうか設定します．これはすべてのユーザ一括で指定する束縛変数がないようです（あったら教えてください）．</p>
+<h5 id="home-home-name"><code>home = "/home/_name_";</code></h5>
+<p>ユーザのホームディレクトリを設定します．ユーザ名とディレクトリ名は違っていてもコンパイルが成功し，ログインもできます．が，同じ名前のほうが無難でしょう．</p>
+<h5 id="extragroups-wheel"><code>extraGroups = ["wheel"];</code></h5>
+<p>ユーザの入るグループを設定します．<code>useradd</code>の<code>-G</code>に当たる部分でしょうか．複数のグループが設定できるようにextraGroupsはリストになっています．リストはスペースで区切ります．Nix言語の仕様ではリスト内の型が違ってもいいようですがextraGroupsの型はlist of stringsです．</p>
+<p>参考</p>
+<p>    <a href="https://nixos.wiki/wiki/Nix_Expression_Language#Types">Nix Expression Language - NixOS Wiki #Types</a> 言語仕様について</p>
+<p>    <a href="https://github.com/NixOS/nixpkgs/blob/release-18.09/nixos/modules/config/users-groups.nix">nixpkgs/users-groups.nix at release-18.09 · NixOS/nixpkgs · GitHub</a> extraGroupsについて</p>
+<p>これらを書き込んだら以下を実行します:</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span># nixos-rebuild switch
+</span><span># passwd _name_
+</span></code></pre>
+<p><code>passwd _name_</code> で一般ユーザのパスワードを設定します．</p>
+<p>さて，重要なのは前者<code>nixos-rebuild switch</code>．このコマンドをすると何が変わるでしょうか．再起動してみます（インストールディスクが入ったままなので，もしそちら（起動時に豪華な画面が出る方）が起動してしまったら一番下のshutdownを選択し光学ディスクドライブを空にします）．</p>
+<p>再起動すると</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>NixOS (Generation 1 NixOS ...
+</span><span>NixOS (Generation 2 NixOS ...
+</span></code></pre>
+<p>と２つあることがわかります．エンターキー押下または5秒間だけ待ってやるとGeneration2が起動します．これは<code>nixos-rebuild switch</code>でシステムが更新され，また前のシステムは残っていることを意味します．一般ユーザでログインし，ブートローダの設定を覗いてみます:</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>$ ls /boot/loader/entries/
+</span><span>nixos-generation-1.conf nixos-generation-2.conf
+</span></code></pre>
+<p>2つあります．結局ここから選んでいたということです．<code>diff</code>ってみます．</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>$ cd /boot/loader/entries/
+</span><span>$ diff nixos-generation-1.conf nixos-generation-2.conf
+</span><span>...
+</span><span>5c5
+</span><span>&lt; options ... init=/.../d9iv1...  
+</span><span>---
+</span><span>&gt; options ... init=/.../7sijy...
+</span></code></pre>
+<p>（文字列は自分のを適当に拾ってきましたorz）</p>
+<p>initが指すファイルが別物です．全く違うシステムを起動しているのと同じです．故に新しい世代で故障しても古い世代に戻れば無傷のままいられるということです（もちろんこれは依存関係が壊れたなどの故障であり，HDDが物理的にぶっ壊れた場合は…手厚く葬ってあげてください）．</p>
+<p>試しに再起動して古いシステムで起動します．一般ユーザでログインしようとしてもできないことがわかります．なぜならこの世代の時まだ一般ユーザを作っていない，即ちconfiguration.nixが適用されていないからです．/etc/passwdを見ても_name_ ユーザはいません．</p>
+<p>このようにNixOSでは<code>nixos-rebuild switch</code>で古いシステムを残しながら更新していきます．それが一番のポイントです．</p>
+<p>私はまだNixOSをあまり使っていませんが，このコマンドはおそらくよく使うコマンドになるでしょう．</p>
+<p>参考</p>
+<p>    <a href="https://nixos.wiki/wiki/NixOS#Generations">NixOS - NixOS Wiki #Generations</a> 世代について</p>
+<p>    <a href="https://scrapbox.io/kalaclista/NixOS_%E3%81%AF%E8%89%AF%E3%81%84%E3%81%9E%EF%BC%81%E3%81%A8%E3%81%84%E3%81%86%E8%A9%B1">NixOS は良いぞ！という話 - カラクリスタ・ノート</a> 200世代以上更新している方</p>
+<h3 id="rutoqu-reruno">ルート取れるの？</h3>
+<p>忘れていました，一般ユーザで<code>sudo</code>を試しましょう．コマンドはなんでもいいです．</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>$ sudo pwd
+</span><span>  
+</span><span>We trust you have received the usual lecture from the local system  
+</span><span>Administrator. It usually boils down to these three things:  
+</span><span>  
+</span><span>    #1) Respect the privacy of others.  
+</span><span>    #2) Think before you type.  
+</span><span>    #3) With great power comes great responsibility.  
+</span><span>  
+</span><span>sudo password for _name_:  
+</span><span>/home/_name_
+</span></code></pre>
+<p>お疲れ様でした．</p>
+
+</main>
+
+    <div class="dark-mode-buttons">
+        <button class="dark-mode-button" id="dark-mode-on"><img src="http://jr2hao.dev/dark_mode.svg" width="24" height="24" alt="Dark mode" aria-label="dark mode toggle" title="Dark mode"></button>
+        <button class="dark-mode-button" id="dark-mode-off"><img src="http://jr2hao.dev/light_mode.svg" width="24" height="24" alt="Light mode" aria-label="light mode toggle" title="Light mode"></button>
+    </div>
+    <script>
+        const cls = document.querySelector("html").classList;
+        const sessionTheme = sessionStorage.getItem("theme");
+
+        function setDark() {
+            cls.add("dark-mode");
+            cls.remove("light-mode");
+            sessionStorage.setItem("theme", "dark");
+        }
+        function setLight() {
+            cls.add("light-mode");
+            cls.remove("dark-mode");
+            sessionStorage.setItem("theme", "light");
+        }
+
+        if (sessionTheme === "dark") {
+            setDark();
+        } else if (sessionTheme === "light") {
+            setLight();
+        } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            setDark();
+        }
+
+        document.getElementById("dark-mode-on").addEventListener("click", function(e) {
+            setDark();
+        });
+        document.getElementById("dark-mode-off").addEventListener("click", function(e) {
+            setLight();
+        });
+    </script>
+    <noscript>
+        <style>
+            .dark-mode-buttons {
+                display: none;
+            }
+        </style>
+    </noscript>
+    <footer>
+            <small>
+                2025 jr2hao all rights reserved
+            </small>
+    </footer>
+</body>
+</html>

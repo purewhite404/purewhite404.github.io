@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>JR2HAO | ホームページに Zola を導入した</title>
+    
+<link rel="stylesheet" href="http://jr2hao.dev/style.css?h=8c8a56e27d10588f1d5e">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js" integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+          // customised options
+          // • auto-render specific keys, e.g.:
+          delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false},
+              {left: '\\(', right: '\\)', display: false},
+              {left: '\\[', right: '\\]', display: true}
+          ],
+          // • rendering keys, e.g.:
+          throwOnError : false
+        });
+    });
+</script>
+
+    
+    
+    
+</head>
+<body>
+    
+<header class="space">
+    <a href="javascript:history.back();">&LeftArrow; Back</a>
+</header>
+
+    
+<main>
+    <h1>ホームページに Zola を導入した</h1>
+    
+    <p class="secondary small">
+        created at 2025&#x2F;01&#x2F;23
+        , updated at 2025&#x2F;12&#x2F;11
+
+        
+        
+        
+
+        
+    </p>
+    
+    <div class="space"></div>
+    <p>ホームページに Jamstack の一つである <a href="http://jr2hao.dev/blog/intro-zola/getzola.org">Zola</a> を導入した．</p>
+<h2 id="attaching-theme">Attaching theme</h2>
+<ul>
+<li>theme には <a href="https://github.com/InputUsername/zola-hook">Hook</a> を用いた．
+<ul>
+<li><code>config.toml</code> に theme を設定し，<code>content/</code> と <code>content/blog</code> にそれぞれ <code>_index.md</code> を置けば動く．</li>
+</ul>
+</li>
+</ul>
+<h2 id="deploy-using-shalzz-zola-deploy-action">Deploy using <a href="https://github.com/shalzz/zola-deploy-action">shalzz/zola-deploy-action</a></h2>
+<ul>
+<li>Custom Domain を設定する場合は <code>static/CNAME</code> ファイルに使用したいドメインを書く</li>
+</ul>
+<h3 id="how-to-deploy-key-update">how to deploy key update</h3>
+<ol>
+<li>Deploy key の有効期限が切れたときは <a href="https://github.com/settings/tokens">tokens</a> にアクセスして鍵をアップデート．
+<ul>
+<li>Generate New Token(classic) から <code>public_repo</code> にチェックをつけてTokenを生成する．</li>
+</ul>
+</li>
+<li>生成された token をコピーする（このタブを消すともう一度見ることはできない）</li>
+<li>自分のリポジトリの settings/secrets/actions から GITHUB_TOKEN を編集</li>
+</ol>
+
+</main>
+
+    <div class="dark-mode-buttons">
+        <button class="dark-mode-button" id="dark-mode-on"><img src="http://jr2hao.dev/dark_mode.svg" width="24" height="24" alt="Dark mode" aria-label="dark mode toggle" title="Dark mode"></button>
+        <button class="dark-mode-button" id="dark-mode-off"><img src="http://jr2hao.dev/light_mode.svg" width="24" height="24" alt="Light mode" aria-label="light mode toggle" title="Light mode"></button>
+    </div>
+    <script>
+        const cls = document.querySelector("html").classList;
+        const sessionTheme = sessionStorage.getItem("theme");
+
+        function setDark() {
+            cls.add("dark-mode");
+            cls.remove("light-mode");
+            sessionStorage.setItem("theme", "dark");
+        }
+        function setLight() {
+            cls.add("light-mode");
+            cls.remove("dark-mode");
+            sessionStorage.setItem("theme", "light");
+        }
+
+        if (sessionTheme === "dark") {
+            setDark();
+        } else if (sessionTheme === "light") {
+            setLight();
+        } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            setDark();
+        }
+
+        document.getElementById("dark-mode-on").addEventListener("click", function(e) {
+            setDark();
+        });
+        document.getElementById("dark-mode-off").addEventListener("click", function(e) {
+            setLight();
+        });
+    </script>
+    <noscript>
+        <style>
+            .dark-mode-buttons {
+                display: none;
+            }
+        </style>
+    </noscript>
+    <footer>
+            <small>
+                2025 jr2hao all rights reserved
+            </small>
+    </footer>
+</body>
+</html>
