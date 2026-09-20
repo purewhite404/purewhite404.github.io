@@ -1,18 +1,32 @@
-name: Zola on GitHub Pages
+name: Deploy
 
 on:
- push:
-  branches:
-   - main
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never cancel a deploy midway; a superseded run is better than a half-applied site.
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
-  build:
-    name: Publish site
+  deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-    - name: Checkout main
-      uses: actions/checkout@v4
-    - name: Build and deploy
-      uses: shalzz/zola-deploy-action@v0.19.2
-      env:
-        GITHUB_TOKEN: ${{ secrets.ACTIONS_DEPLOY_TOKEN }}
+      - uses: actions/checkout@v4
+      - run: python3 -m pip install --disable-pip-version-check -r requirements.txt
+      - run: python3 build.py --out _site --check
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4

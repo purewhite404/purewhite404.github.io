@@ -4,7 +4,7 @@ date = 2025-01-23
 updated = 2025-12-11
 +++
 
-ホームページに Jamstack の一つである [Zola](getzola.org) を導入した．
+ホームページに Jamstack の一つである [Zola](https://www.getzola.org/) を導入した．
 
 ## Attaching theme
 - theme には [Hook](https://github.com/InputUsername/zola-hook) を用いた．

@@ -5,4 +5,4 @@
 
 ## Works
 
-- [Exif Analyzer](./exif-analyzer) : JPEGのEXIFから露光情報をいい感じに表示させる
+- [Exif Analyzer](/exif-analyzer/) : JPEGのEXIFから露光情報をいい感じに表示させる

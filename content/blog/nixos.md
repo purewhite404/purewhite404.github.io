@@ -73,7 +73,8 @@ sda     8:0    0    16G  0 disk
 HDDを16GBに設`定したのでこう書かれていました．この場合/dev/sdaを設定することになります．`gdiskでパーティションを切ります．まずはパーティションテーブルを作ります:
 
 
-```# gdisk /dev/sda  
+```
+# gdisk /dev/sda  
 Command (? for help):o
 This option ...  
 Proceed? (Y/N):y
@@ -82,7 +83,8 @@ Proceed? (Y/N):y
 次にパーティションを切ります．16GBのうち256MBをブートパーティションに割り当て，残りをルートパーティションに割り当てます:
 
 
-```Command (? for help):n
+```
+Command (? for help):n
 Partition number (...) :  
 First sector (...) :  
 Last sector (...) : +256M
@@ -98,7 +100,8 @@ Hex code or GUID (...) :
 `:`の後に何も書いていない箇所は何も書かなくていいです．最後に切られたパーティションをディスクに書き込みます:
 
 
-```Command (? for help):w
+```
+Command (? for help):w
 Final check complete. About...  
 Do you want to proceed?(Y/N):y
 OK; writing...  
@@ -108,7 +111,8 @@ The operation has completed successfully.
 これでパーティションが切られました．`lsblk`で確認します:
 
 
-```# lsblk  
+```
+# lsblk  
 sda      8:0    0     16G  0 disk  
 ├sda1   8:1    0    256M  0 part  
 └sda2   8:2    0   15.8G  0 part
