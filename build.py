@@ -41,14 +41,15 @@ FRONT_MATTER = re.compile(r"\+\+\+\n(.*?)^\+\+\+\n", re.S | re.M)
 ROOT = Path(__file__).parent
 CONTENT = ROOT / "content"
 STATIC = ROOT / "static"
+ICONS = ROOT / "icons"
 
 SITE_TITLE = "JR2HAO"
 
-# (label, href, icon) for the header nav on the front page.
+# (label, href, icon stem in icons/) for the header nav on the front page.
 HEADER_LINKS = [
-    ("Bluesky", "https://bsky.app/profile/jr2hao.dev", "bluesky.svg"),
-    ("GitHub", "https://github.com/purewhite404", "github.svg"),
-    ("About me", "/about.html", "aboutme.svg"),
+    ("Bluesky", "https://bsky.app/profile/jr2hao.dev", "bluesky"),
+    ("GitHub", "https://github.com/purewhite404", "github"),
+    ("About me", "/about.html", "aboutme"),
 ]
 
 # Sections, in the order they appear on the front page.
@@ -101,8 +102,8 @@ $head_extra</head>
 $header
 $main
     <div class="dark-mode-buttons">
-        <button class="dark-mode-button" id="dark-mode-on"><img src="/dark_mode.svg" width="24" height="24" alt="Dark mode" aria-label="dark mode toggle" title="Dark mode"></button>
-        <button class="dark-mode-button" id="dark-mode-off"><img src="/light_mode.svg" width="24" height="24" alt="Light mode" aria-label="light mode toggle" title="Light mode"></button>
+        <button class="dark-mode-button" id="dark-mode-on" aria-label="dark mode toggle" title="Dark mode">$dark_icon</button>
+        <button class="dark-mode-button" id="dark-mode-off" aria-label="light mode toggle" title="Light mode">$light_icon</button>
     </div>
     <script>
         const cls = document.querySelector("html").classList;
@@ -155,11 +156,19 @@ BACK_HEADER = """<header class="space">
 </header>"""
 
 
+def icon(stem: str, attrs: str) -> str:
+    """Inline an icons/*.svg. Inlining rather than <img src> keeps every page
+    to a single request, and lets the artwork follow currentColor."""
+    svg = ICONS.joinpath(stem + ".svg").read_text(encoding="utf-8").strip()
+    assert svg.startswith("<svg"), stem
+    return f"<svg {attrs} " + svg[len("<svg "):]
+
+
 def front_header() -> str:
     links = "\n".join(
         f'            <a href="{href}">{label}'
-        f'<img class="icons" src="/img/{icon}"></a>'
-        for label, href, icon in HEADER_LINKS
+        + icon(stem, 'class="icons" aria-hidden="true"') + "</a>"
+        for label, href, stem in HEADER_LINKS
     )
     return (f'    <header class="space">\n'
             f'        <h1>{SITE_TITLE}</h1>\n'
@@ -346,6 +355,8 @@ def page_shell(*, title, main, header, description=None, math=False, csshash):
         title=html.escape(title),
         description=desc,
         head_extra=(KATEX + "\n") if math else "",
+        dark_icon=icon("dark_mode", 'aria-hidden="true"'),
+        light_icon=icon("light_mode", 'aria-hidden="true"'),
         header=header,
         main=main,
         csshash=csshash,
@@ -550,7 +561,7 @@ def serve(out: Path, port: int) -> None:
             super().send_error(code, message, explain)
 
     def watch():
-        sources = [CONTENT, STATIC, Path(__file__)]
+        sources = [CONTENT, STATIC, ICONS, Path(__file__)]
         last = 0.0
         while True:
             newest = max(
