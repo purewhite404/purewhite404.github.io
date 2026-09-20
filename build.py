@@ -307,17 +307,17 @@ def parse(src: Path) -> Page:
         sys.exit(f"{src}: missing or unterminated +++ front matter")
     fm, body = m.group(1), raw[m.end():]
     section = src.parent.name if src.parent != CONTENT else ""
-    stem = "index" if src.stem == "_index" else src.stem
+    stem = src.stem
     return Page(src, section, stem, tomllib.loads(fm), body.lstrip("\n"), raw)
 
 
 def load() -> tuple[Page, dict[str, Page]]:
-    root = parse(CONTENT / "_index.md")
+    root = parse(CONTENT / "index.md")
     indexes: dict[str, Page] = {}
     for name, _, sort_key in SECTIONS:
-        index = parse(CONTENT / name / "_index.md")
+        index = parse(CONTENT / name / "index.md")
         pages = [parse(p) for p in sorted((CONTENT / name).glob("*.md"))
-                 if p.stem != "_index"]
+                 if p.stem != "index"]
         if sort_key == "date":
             pages.sort(key=lambda p: p.date, reverse=True)
         else:
@@ -325,7 +325,7 @@ def load() -> tuple[Page, dict[str, Page]]:
         index.children = pages
         indexes[name] = index
     root.children = [parse(p) for p in sorted(CONTENT.glob("*.md"))
-                     if p.stem != "_index"]
+                     if p.stem != "index"]
     return root, indexes
 
 
@@ -501,15 +501,15 @@ def check(out: Path) -> int:
 
     for src in sorted(CONTENT.rglob("*.md")):
         stem = src.stem
-        if stem != "_index" and not SLUG.fullmatch(stem):
+        if stem != "index" and not SLUG.fullmatch(stem):
             problems.append(f"{src}: filename is not a slug "
                             f"(expected {stem.lower().replace('_', '-')})")
         page = parse(src)
-        if src != CONTENT / "_index.md" and "title" not in page.meta:
+        if src != CONTENT / "index.md" and "title" not in page.meta:
             problems.append(f"{src}: missing title")
-        if src.parent.name == "memo" and stem != "_index" and not page.genre:
+        if src.parent.name == "memo" and stem != "index" and not page.genre:
             problems.append(f"{src}: missing extra.genre")
-        if src.parent.name == "blog" and stem != "_index" and not page.date:
+        if src.parent.name == "blog" and stem != "index" and not page.date:
             problems.append(f"{src}: missing date")
 
     for lang in sorted(_unknown_langs):
