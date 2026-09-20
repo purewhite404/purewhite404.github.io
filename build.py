@@ -22,7 +22,6 @@ import shutil
 import sys
 import tomllib
 from dataclasses import dataclass, field
-from datetime import date
 from pathlib import Path
 from string import Template
 
@@ -34,7 +33,7 @@ from pygments.formatters import HtmlFormatter
 from pygments.lexers import get_lexer_by_name
 from pygments.style import Style
 from pygments.token import (Comment, Error, Generic, Keyword, Name, Number,
-                            Operator, Punctuation, String, Token)
+                            Operator, String)
 from pygments.util import ClassNotFound
 
 FRONT_MATTER = re.compile(r"\+\+\+\n(.*?)^\+\+\+\n", re.S | re.M)
@@ -44,7 +43,6 @@ CONTENT = ROOT / "content"
 STATIC = ROOT / "static"
 
 SITE_TITLE = "JR2HAO"
-FOOTER = "2025 jr2hao all rights reserved"
 
 # (label, href, icon) for the header nav on the front page.
 HEADER_LINKS = [
@@ -145,7 +143,7 @@ $main
     </noscript>
     <footer>
             <small>
-                $footer
+                2025 jr2hao all rights reserved
             </small>
     </footer>
 </body>
@@ -269,17 +267,13 @@ class Page:
     children: list["Page"] = field(default_factory=list)
 
     @property
-    def is_index(self) -> bool:
-        return self.stem == "index"
-
-    @property
     def out(self) -> str:
         """Output path without extension, relative to the site root."""
         return f"{self.section}/{self.stem}" if self.section else self.stem
 
     @property
     def href_html(self) -> str:
-        if self.is_index:
+        if self.stem == "index":
             return f"/{self.section}/" if self.section else "/"
         return f"/{self.out}.html"
 
@@ -292,7 +286,7 @@ class Page:
         return self.meta.get("title", SITE_TITLE)
 
     @property
-    def date(self) -> date | None:
+    def date(self):
         return self.meta.get("date")
 
     @property
@@ -354,28 +348,27 @@ def page_shell(*, title, main, header, description=None, math=False, csshash):
         head_extra=(KATEX + "\n") if math else "",
         header=header,
         main=main,
-        footer=FOOTER,
         csshash=csshash,
     )
 
 
-def list_html(groups, *, heading_level=2) -> str:
+def list_html(groups) -> str:
     out = []
     for heading, pages in groups:
         items = "\n".join(
             f'            <li><a href="{p.href_html}">{html.escape(p.title)}</a></li>'
             for p in pages
         )
-        out.append(f"        <h{heading_level}>{html.escape(heading)}</h{heading_level}>\n"
+        out.append(f"        <h2>{html.escape(heading)}</h2>\n"
                    f"        <ul>\n{items}\n        </ul>")
     return "\n".join(out)
 
 
-def list_md(groups, *, heading_level=2) -> str:
+def list_md(groups) -> str:
     out = []
     for heading, pages in groups:
         items = "\n".join(f"- [{p.title}]({p.href_md})" for p in pages)
-        out.append(f"{'#' * heading_level} {heading}\n\n{items}")
+        out.append(f"## {heading}\n\n{items}")
     return "\n\n".join(out)
 
 
@@ -416,11 +409,7 @@ def render_home_html(root: Page, indexes: dict[str, Page], csshash: str) -> str:
     parts = ["    <main>", md.render(root.body).rstrip()]
     for name, label, _ in SECTIONS:
         index = indexes[name]
-        items = "\n".join(
-            f'            <li><a href="{p.href_html}">{html.escape(p.title)}</a></li>'
-            for p in index.children[:20]
-        )
-        parts.append(f"\n        <h2>{label}</h2>\n        <ul>\n{items}\n        </ul>\n"
+        parts.append("\n" + list_html([(label, index.children[:20])]) + "\n"
                      f'        <p><a href="{index.href_html}">View all</a></p>')
     parts.append("    </main>")
     return page_shell(title=SITE_TITLE, main="\n".join(parts),
@@ -432,8 +421,8 @@ def render_home_md(root: Page, indexes: dict[str, Page]) -> str:
     parts = [root.raw.rstrip()]
     for name, label, _ in SECTIONS:
         index = indexes[name]
-        items = "\n".join(f"- [{p.title}]({p.href_md})" for p in index.children[:20])
-        parts.append(f"## {label}\n\n{items}\n\n[View all]({index.href_md})")
+        parts.append(list_md([(label, index.children[:20])])
+                     + f"\n\n[View all]({index.href_md})")
     return "\n\n".join(parts) + "\n"
 
 
@@ -454,14 +443,9 @@ def render_404(csshash: str) -> str:
 # Output
 # --------------------------------------------------------------------------
 
-def write(path: Path, data: str | bytes) -> None:
-    """Idempotent: an unchanged file keeps its mtime, so --serve's watcher
-    does not retrigger on its own output."""
-    if isinstance(data, str):
-        data = data.encode("utf-8")
+def write(path: Path, text: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    if not path.exists() or path.read_bytes() != data:
-        path.write_bytes(data)
+    path.write_text(text, encoding="utf-8")
 
 
 def build(out: Path) -> None:
@@ -474,15 +458,12 @@ def build(out: Path) -> None:
 
     write(out / "index.html", render_home_html(root, indexes, csshash))
     write(out / "index.md", render_home_md(root, indexes))
-    for page in root.children:
-        write(out / f"{page.out}.html", render_page_html(page, csshash))
-        write(out / f"{page.out}.md", page.raw)
     for index in indexes.values():
         write(out / f"{index.out}.html", render_section_html(index, csshash))
         write(out / f"{index.out}.md", render_section_md(index))
-        for page in index.children:
-            write(out / f"{page.out}.html", render_page_html(page, csshash))
-            write(out / f"{page.out}.md", page.raw)
+    for page in root.children + [p for i in indexes.values() for p in i.children]:
+        write(out / f"{page.out}.html", render_page_html(page, csshash))
+        write(out / f"{page.out}.md", page.raw)
 
     write(out / "404.html", render_404(csshash))
     write(out / "robots.txt", "User-agent: *\nAllow: /\n")

@@ -1,3 +1,6 @@
-markdown-it-py>=3,<5
-mdit-py-plugins>=0.4,<1
-Pygments>=2.17
+# Pinned exactly: ubuntu-latest ships markdown-it-py 3.0.0 and Pygments 2.17.2
+# in /usr/lib/python3/dist-packages, so a range lets CI and a local checkout
+# emit different HTML for highlighted code blocks.
+markdown-it-py==4.2.0
+mdit-py-plugins==0.6.1
+Pygments==2.21.0
