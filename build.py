@@ -523,81 +523,15 @@ def check(out: Path) -> int:
     return 1 if problems else 0
 
 
-# --------------------------------------------------------------------------
-# --serve
-# --------------------------------------------------------------------------
-
-def serve(out: Path, port: int) -> None:
-    import http.server
-    import mimetypes
-    import threading
-    import time
-
-    mimetypes.add_type("text/markdown", ".md")
-
-    class Handler(http.server.SimpleHTTPRequestHandler):
-        def __init__(self, *a, **kw):
-            super().__init__(*a, directory=str(out), **kw)
-
-        def end_headers(self):
-            self.send_header("Cache-Control", "no-store")
-            super().end_headers()
-
-        def log_message(self, fmt, *args):
-            pass
-
-        def send_error(self, code, message=None, explain=None):
-            # Preview the real 404 page, the way GitHub Pages will serve it.
-            page = out / "404.html"
-            if code == 404 and page.exists():
-                body = page.read_bytes()
-                self.send_response(404)
-                self.send_header("Content-Type", "text/html; charset=utf-8")
-                self.send_header("Content-Length", str(len(body)))
-                self.end_headers()
-                if self.command != "HEAD":
-                    self.wfile.write(body)
-                return
-            super().send_error(code, message, explain)
-
-    def watch():
-        sources = [CONTENT, STATIC, ICONS, Path(__file__)]
-        last = 0.0
-        while True:
-            newest = max(
-                (p.stat().st_mtime for s in sources
-                 for p in ([s] if s.is_file() else s.rglob("*")) if p.is_file()),
-                default=0.0,
-            )
-            if newest > last:
-                last = newest
-                try:
-                    build(out)
-                    print("rebuilt")
-                except Exception as exc:  # keep the server alive while editing
-                    print(f"build failed: {exc}", file=sys.stderr)
-            time.sleep(0.5)
-
-    threading.Thread(target=watch, daemon=True).start()
-    print(f"serving {out} on http://localhost:{port}")
-    http.server.ThreadingHTTPServer(("", port), Handler).serve_forever()
-
-
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--out", default="_site", type=Path)
     ap.add_argument("--check", action="store_true",
                     help="fail on slug, front matter, fence and link problems")
-    ap.add_argument("--serve", action="store_true", help="preview on localhost")
-    ap.add_argument("--port", default=8000, type=int)
     args = ap.parse_args()
 
     build(args.out)
-    if args.check and check(args.out):
-        return 1
-    if args.serve:
-        serve(args.out, args.port)
-    return 0
+    return 1 if args.check and check(args.out) else 0
 
 
 if __name__ == "__main__":

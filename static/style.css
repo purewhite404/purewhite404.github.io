@@ -41,6 +41,9 @@
 .dark-mode-button {
   border: none;
   background-color: transparent;
+  /* <button> does not inherit color, so the inlined icon's currentColor would
+     otherwise resolve to the UA default (buttontext). Match the header icons. */
+  color: var(--secondary);
 }
 .dark-mode-button:hover {
   cursor: pointer;
